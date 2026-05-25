@@ -1,0 +1,41 @@
+Traceback (most recent call last):
+  File "<string>", line 10, in <module>
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\django\db\models\fields\files.py", line 99, in save
+    self.name = self.storage.save(name, content, max_length=self.field.max_length)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\django\core\files\storage\base.py", line 49, in save
+    name = self._save(name, content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\storages\backends\s3.py", line 565, in _save
+    obj.upload_fileobj(content, ExtraArgs=params, Config=self.transfer_config)
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\boto3\s3\inject.py", line 767, in object_upload_fileobj
+    return self.meta.client.upload_fileobj(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\botocore\context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\boto3\s3\inject.py", line 678, in upload_fileobj
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\s3transfer\futures.py", line 111, in result
+    return self._coordinator.result()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\s3transfer\futures.py", line 287, in result
+    raise self._exception
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\s3transfer\tasks.py", line 142, in __call__
+    return self._execute_main(kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\s3transfer\tasks.py", line 165, in _execute_main
+    return_value = self._main(**kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\s3transfer\upload.py", line 796, in _main
+    client.put_object(Bucket=bucket, Key=key, Body=body, **extra_args)
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\botocore\client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\botocore\context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Documents\GATE Exam\Gsheets\Django\app\venv\Lib\site-packages\botocore\client.py", line 1078, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.exceptions.ClientError: An error occurred (InvalidAccessKeyId) when calling the PutObject operation: The AWS Access Key Id you provided does not exist in our records.

@@ -1,0 +1,291 @@
+{% extends "students/base_auth.html" %}
+{% block title %}EduTrack Analytics Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 style="font-size:1.75rem;font-weight:800;margin:0;letter-spacing:-0.02em;">
+      <i class="bi bi-house-door me-2" style="color:#818cf8;"></i>Dashboard
+    </h1>
+    <p style="color:var(--muted);font-size:0.875rem;margin-top:0.25rem;">
+      {{ request.user.username }} &nbsp;·&nbsp;
+      <span style="color:{% if user_role == 'teacher' %}#34d399{% else %}#22d3ee{% endif %};">{{ user_role|title }}</span>
+    </p>
+  </div>
+  {% if user_role == 'teacher' or user_role == 'principal' %}
+  <a href="{% url 'add_announcement' %}" class="btn btn-sm"
+     style="background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);border-radius:10px;font-weight:600;">
+    <i class="bi bi-megaphone-fill me-1"></i> Post Announcement
+  </a>
+  {% endif %}
+</div>
+
+<!-- Teacher Sections Information -->
+{% if user_role == 'teacher' %}
+<div class="row g-4 mb-4">
+  <!-- Class Teacher Role -->
+  <div class="col-lg-6">
+    <div class="card h-100" style="border: 1px solid rgba(16,185,129,0.3); background: linear-gradient(135deg, rgba(16,185,129,0.05), rgba(0,0,0,0));">
+      <div class="card-header border-0 pb-0">
+        <h4><i class="bi bi-star-fill me-2" style="color:#34d399;"></i>Class Teacher Of</h4>
+      </div>
+      <div class="card-body">
+        {% for sec in my_class_sections %}
+        <div class="d-flex align-items-center justify-content-between mb-3 p-3" style="background:var(--surface2);border-radius:12px;">
+          <div>
+            <h5 style="margin:0;font-weight:700;">{{ sec.class_name }} – Sec {{ sec.section }}</h5>
+            <span style="font-size:.82rem;color:var(--muted);">{{ sec.student_count }} Students</span>
+          </div>
+          <a href="{% url 'section_detail' sec.pk %}" class="btn btn-sm" style="background:rgba(52,211,153,0.15);color:#34d399;font-weight:600;">
+            Manage Class <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+        {% empty %}
+        <p style="color:var(--muted);font-size:.875rem;">Not assigned as a Class Teacher.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Subject Teacher Role -->
+  <div class="col-lg-6">
+    <div class="card h-100" style="border: 1px solid rgba(34,211,238,0.3); background: linear-gradient(135deg, rgba(34,211,238,0.05), rgba(0,0,0,0));">
+      <div class="card-header border-0 pb-0">
+        <h4><i class="bi bi-book-half me-2" style="color:#22d3ee;"></i>Subject Teacher For</h4>
+      </div>
+      <div class="card-body p-0">
+        <div style="max-height: 250px; overflow-y: auto; padding: 0 1.25rem 1.25rem;">
+          {% for assignment in my_subject_assignments %}
+          <div class="d-flex align-items-center justify-content-between mb-2 p-2 px-3" style="background:var(--surface2);border-radius:8px; border-left: 3px solid #22d3ee;">
+            <div>
+              <div style="font-weight:700;font-size:0.9rem;">{{ assignment.section }}</div>
+              <div style="font-size:0.75rem;color:var(--muted);">Subject: {{ assignment.subject }}</div>
+            </div>
+            <a href="{% url 'section_detail' assignment.section.pk %}" style="font-size:.8rem;color:#22d3ee;text-decoration:none;">
+              View <i class="bi bi-chevron-right"></i>
+            </a>
+          </div>
+          {% empty %}
+          <p style="color:var(--muted);font-size:.875rem;">Not assigned as a Subject Teacher.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-card c1">
+      <div style="font-size:0.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;"><i class="bi bi-people-fill me-1"></i>Students</div>
+      <div class="stat-num">{{ total_students }}</div>
+      <div class="stat-lbl">Total enrolled</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card c2">
+      <div style="font-size:0.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;"><i class="bi bi-graph-up me-1"></i>Avg Marks</div>
+      <div class="stat-num" style="color:#34d399;">{{ avg_student_marks }}%</div>
+      <div class="stat-lbl">Institution-wide</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card c3">
+      <div style="font-size:0.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;"><i class="bi bi-calendar-check me-1"></i>Avg Attendance</div>
+      <div class="stat-num" style="color:#fbbf24;">{{ avg_attendance }}%</div>
+      <div class="stat-lbl">All students</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card c4">
+      <div style="font-size:0.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;"><i class="bi bi-journal-text me-1"></i>Assignments</div>
+      <div class="stat-num" style="color:#818cf8;">{{ total_assignments }}</div>
+      <div class="stat-lbl">Total</div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header"><h4><i class="bi bi-pie-chart-fill me-2" style="color:#818cf8;"></i>Gender Split</h4></div>
+      <div class="card-body"><div style="position:relative;height:240px;"><canvas id="genderChart"></canvas></div></div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header"><h4><i class="bi bi-bar-chart-fill me-2" style="color:#34d399;"></i>Students by Class</h4></div>
+      <div class="card-body"><div style="position:relative;height:240px;"><canvas id="classChart"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Section Performance Charts (teacher/principal only) -->
+{% if section_perf %}
+<div class="row g-4 mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h4><i class="bi bi-bar-chart-line-fill me-2" style="color:#818cf8;"></i>Section Performance Comparison</h4>
+        <a href="{% url 'section_performance' %}" style="font-size:.8rem;color:#818cf8;text-decoration:none;">Full Report →</a>
+      </div>
+      <div class="card-body">
+        <div class="row g-4">
+          <div class="col-md-6"><div style="position:relative;height:220px;"><canvas id="secMarksChart"></canvas></div></div>
+          <div class="col-md-6"><div style="position:relative;height:220px;"><canvas id="secAttChart"></canvas></div></div>
+        </div>
+        <!-- Section summary pills -->
+        <div class="d-flex gap-3 flex-wrap mt-3">
+          {% for p in section_perf %}
+          <a href="{% url 'section_detail' p.section.pk %}" style="text-decoration:none;">
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.5rem 1rem;display:flex;align-items:center;gap:.5rem;">
+              <div style="font-size:.82rem;font-weight:700;">{{ p.section }}</div>
+              <span class="badge-custom {% if p.avg_marks >= 75 %}badge-high{% elif p.avg_marks >= 50 %}badge-mid{% else %}badge-low{% endif %}" style="font-size:.68rem;">{{ p.avg_marks }}%</span>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Bottom: Course chart + Activity Logs -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-5">
+    <div class="card h-100">
+      <div class="card-header"><h4><i class="bi bi-bar-chart-fill me-2" style="color:#22d3ee;"></i>Course Distribution</h4></div>
+      <div class="card-body"><div style="position:relative;height:280px;"><canvas id="courseChart"></canvas></div></div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-header"><h4><i class="bi bi-clock-history me-2" style="color:var(--muted);"></i>Recent Activity</h4></div>
+      <div class="card-body p-0" style="max-height:310px;overflow-y:auto;">
+        <table class="table-dark-custom w-100">
+          <thead><tr><th>Action</th><th>Description</th><th>Time</th></tr></thead>
+          <tbody>
+            {% for log in recent_logs %}
+            <tr>
+              <td><span class="badge-custom badge-mid" style="font-size:.7rem;">{{ log.action }}</span></td>
+              <td style="font-size:.82rem;">{{ log.description|truncatechars:50 }}</td>
+              <td style="font-size:.78rem;color:var(--muted);white-space:nowrap;">{{ log.timestamp|date:"M d, H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="text-center py-3" style="color:var(--muted);">No activity yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Announcements -->
+<div class="card">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h4><i class="bi bi-megaphone-fill me-2" style="color:#f59e0b;"></i>Announcements</h4>
+    <a href="{% url 'announcement_list' %}" style="font-size:.8rem;color:#818cf8;text-decoration:none;">View All →</a>
+  </div>
+  <div class="card-body">
+    {% for ann in announcements %}
+    <div style="background:var(--surface2);border-radius:12px;padding:1rem 1.25rem;margin-bottom:.75rem;border-left:3px solid #f59e0b;">
+      <div class="d-flex align-items-start justify-content-between gap-2 flex-wrap">
+        <div>
+          <h6 style="font-weight:700;margin:0 0 .25rem;color:var(--text);">{{ ann.title }}</h6>
+          <p style="color:var(--muted);font-size:.875rem;margin:0;line-height:1.6;">{{ ann.body|truncatewords:25 }}</p>
+        </div>
+        <span class="badge-custom badge-mid" style="font-size:.7rem;white-space:nowrap;">{{ ann.created_at|date:"M d" }}</span>
+      </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-4" style="color:var(--muted);">
+      <i class="bi bi-megaphone" style="font-size:2rem;opacity:.3;"></i>
+      <p class="mt-2 mb-0">No announcements yet.</p>
+      {% if user_role == 'teacher' or user_role == 'principal' %}
+      <a href="{% url 'add_announcement' %}" class="btn btn-sm btn-primary mt-2">Post First Announcement</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  Chart.defaults.color = '#94a3b8';
+  Chart.defaults.font.family = "'Inter', sans-serif";
+  Chart.defaults.scale.grid.color = 'rgba(255,255,255,0.04)';
+
+  new Chart(document.getElementById('genderChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Male', 'Female', 'Other'],
+      datasets: [{ data: [{{ male_count }}, {{ female_count }}, {{ other_count }}],
+        backgroundColor: ['#818cf8','#f472b6','#34d399'], borderWidth: 0 }]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins: { legend:{ position:'right', labels:{ boxWidth:12 } } } }
+  });
+
+  new Chart(document.getElementById('classChart'), {
+    type: 'bar',
+    data: {
+      labels: {{ class_labels|safe }},
+      datasets: [{ label:'Students', data:{{ class_counts|safe }},
+        backgroundColor:'#818cf8', borderRadius:6, borderSkipped:false }]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true }, x:{ grid:{ display:false } } } }
+  });
+
+  new Chart(document.getElementById('courseChart'), {
+    type: 'bar',
+    data: {
+      labels: {{ course_labels|safe }},
+      datasets: [{ label:'Students', data:{{ course_counts|safe }},
+        backgroundColor:'#22d3ee', borderRadius:6, borderSkipped:false }]
+    },
+    options: { indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ x:{ beginAtZero:true }, y:{ grid:{ display:false } } } }
+  });
+
+  {% if section_perf %}
+  const secLabels = {{ perf_labels|safe }};
+  const palette = ['#818cf8','#34d399','#fbbf24','#f87171','#22d3ee','#a78bfa','#fb923c'];
+
+  new Chart(document.getElementById('secMarksChart'), {
+    type: 'bar',
+    data: {
+      labels: secLabels,
+      datasets: [{ label:'Avg Marks (%)', data:{{ perf_marks|safe }},
+        backgroundColor: palette, borderRadius:8, borderSkipped:false }]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true, max:100, title:{ display:true, text:'Avg Marks (%)' } },
+               x:{ grid:{ display:false } } } }
+  });
+
+  new Chart(document.getElementById('secAttChart'), {
+    type: 'bar',
+    data: {
+      labels: secLabels,
+      datasets: [{ label:'Avg Attendance (%)', data:{{ perf_att|safe }},
+        backgroundColor:'#34d399', borderRadius:8, borderSkipped:false }]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true, max:100, title:{ display:true, text:'Attendance (%)' } },
+               x:{ grid:{ display:false } } } }
+  });
+  {% endif %}
+</script>
+{% endblock %}

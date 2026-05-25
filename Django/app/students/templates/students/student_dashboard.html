@@ -1,0 +1,151 @@
+{% extends 'students/base_auth.html' %}
+{% block title %}My Dashboard – EduTrack Pro{% endblock %}
+
+{% block content %}
+<!-- Welcome Hero -->
+<div class="row g-4 mb-4">
+  <div class="col-12">
+    <div style="background: linear-gradient(135deg, rgba(79,70,229,0.15) 0%, rgba(124,58,237,0.1) 100%); border: 1px solid rgba(79,70,229,0.3); border-radius: 20px; padding: 2rem;">
+      <div class="d-flex align-items-center gap-4 flex-wrap">
+        {% if student.profile_picture %}
+          <img src="{{ student.profile_picture.url }}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #818cf8;" alt="{{ student.name }}"/>
+        {% else %}
+          <div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#818cf8,#c084fc);display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:800;color:#fff;border:3px solid rgba(129,140,248,0.5);flex-shrink:0;">
+            {{ student.name|first|upper }}
+          </div>
+        {% endif %}
+        <div style="flex:1;">
+          <h1 style="font-size:2rem;font-weight:800;margin-bottom:0.25rem;">Welcome back, {{ student.name }}!</h1>
+          <div style="color:var(--muted);font-size:1rem;font-weight:500;">{{ student.section_label }} &nbsp;·&nbsp; {{ student.class_name|default:'No Class Assigned' }} &nbsp;·&nbsp; {{ student.course }}</div>
+          {% if student.admission_number %}
+          <div style="color:var(--muted);font-size:.82rem;margin-top:.25rem;">Adm. No: <strong style="color:#818cf8;">{{ student.admission_number }}</strong></div>
+          {% endif %}
+          <div class="d-flex align-items-center gap-3 mt-3 flex-wrap">
+            <span class="badge-custom {% if student.fees_paid %}badge-high{% else %}badge-low{% endif %}">
+              {% if student.fees_paid %}
+                <i class="bi bi-check-circle-fill me-1"></i> Fees Paid
+                {% if student.payment_method %}({{ student.payment_method|title }}){% endif %}
+              {% else %}
+                <i class="bi bi-x-circle-fill me-1"></i> Fees Pending
+              {% endif %}
+            </span>
+            <a href="{% url 'announcement_list' %}" class="badge-custom badge-mid text-decoration-none">
+              <i class="bi bi-megaphone-fill me-1"></i> View Announcements
+              {% if announcements|length > 0 %}({{ announcements|length }}){% endif %}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header"><h4><i class="bi bi-star-fill me-2" style="color:#f59e0b;"></i>Overall Score</h4></div>
+      <div class="card-body text-center d-flex flex-column justify-content-center">
+        <div style="font-size:3rem;font-weight:800;background:-webkit-linear-gradient(#10b981, #06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+          {{ student.marks }}%
+        </div>
+        <div style="color:var(--muted);font-size:0.875rem;margin-top:0.5rem;text-transform:uppercase;letter-spacing:0.05em;font-weight:700;">Aggregate Average</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header"><h4><i class="bi bi-calendar-check-fill me-2" style="color:#22d3ee;"></i>Attendance</h4></div>
+      <div class="card-body text-center d-flex flex-column justify-content-center">
+        <div style="font-size:3rem;font-weight:800;color:{% if student.attendance >= 75 %}#34d399{% else %}#f87171{% endif %};">
+          {{ student.attendance }}%
+        </div>
+        <div style="color:var(--muted);font-size:0.875rem;margin-top:0.5rem;text-transform:uppercase;letter-spacing:0.05em;font-weight:700;">Current Attendance</div>
+        {% if student.attendance < 75 %}
+          <div style="color:#f87171;font-size:0.75rem;margin-top:0.5rem;font-weight:600;"><i class="bi bi-exclamation-triangle-fill me-1"></i>Below 75% required</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header"><h4><i class="bi bi-person-lines-fill me-2" style="color:#818cf8;"></i>Personal Details</h4></div>
+      <div class="card-body">
+        <div class="mb-2">
+          <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Email</div>
+          <div style="font-weight:600;font-size:.875rem;">{{ student.email }}</div>
+        </div>
+        <div class="mb-2">
+          <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Phone</div>
+          <div style="font-weight:600;font-size:.875rem;">{{ student.phone|default:'Not provided' }}</div>
+        </div>
+        <div>
+          <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Gender & Age</div>
+          <div style="font-weight:600;font-size:.875rem;">{{ student.gender_label }}, {{ student.age }} yrs</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Term Marks -->
+{% if term_marks %}
+<div class="card mb-4">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h4><i class="bi bi-bar-chart-fill me-2" style="color:#818cf8;"></i>Term-wise Marks</h4>
+    <a href="{% url 'student_assignments_view' %}" style="font-size:.8rem;color:#818cf8;text-decoration:none;">View Assignments →</a>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-dark-custom w-100">
+        <thead>
+          <tr><th>Subject</th><th>Term</th><th>Marks</th><th>%</th><th>Grade</th></tr>
+        </thead>
+        <tbody>
+          {% for term, marks_list in term_marks.items %}
+            {% for mark in marks_list %}
+            <tr>
+              <td style="font-weight:600;">{{ mark.subject }}</td>
+              <td><span class="badge-custom badge-mid" style="font-size:.7rem;">{{ mark.get_term_display }}</span></td>
+              <td style="color:var(--muted);">{{ mark.marks_obtained }}/{{ mark.max_marks }}</td>
+              <td>
+                <span class="badge-custom {% if mark.percentage >= 75 %}badge-high{% elif mark.percentage >= 50 %}badge-mid{% else %}badge-low{% endif %}">
+                  {{ mark.percentage }}%
+                </span>
+              </td>
+              <td style="font-weight:800;color:{% if mark.percentage >= 75 %}#34d399{% elif mark.percentage >= 50 %}#fbbf24{% else %}#f87171{% endif %};">
+                {{ mark.grade }}
+              </td>
+            </tr>
+            {% endfor %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Latest Announcements -->
+{% if announcements %}
+<div class="card">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h4><i class="bi bi-megaphone-fill me-2" style="color:#f59e0b;"></i>Latest Announcements</h4>
+    <a href="{% url 'announcement_list' %}" style="font-size:.8rem;color:#818cf8;text-decoration:none;">View All →</a>
+  </div>
+  <div class="card-body">
+    {% for ann in announcements %}
+    <div style="background:var(--surface2);border-radius:12px;padding:1rem 1.25rem;margin-bottom:.75rem;border-left:3px solid #f59e0b;">
+      <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+        <h6 style="font-weight:700;margin:0;color:var(--text);">{{ ann.title }}</h6>
+        <span style="font-size:.72rem;color:var(--muted);">{{ ann.created_at|date:"M d, Y" }}</span>
+      </div>
+      <p style="color:var(--muted);font-size:.875rem;margin:0;line-height:1.6;">{{ ann.body|truncatewords:30 }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

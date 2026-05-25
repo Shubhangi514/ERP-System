@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EduTrack Pro – Smart School Management System</title>
+  <meta name="description" content="EduTrack Pro – A professional school management platform for students, teachers, and principals."/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary:    #4f46e5;
+      --primary-dk: #3730a3;
+      --accent:     #7c3aed;
+      --accent2:    #06b6d4;
+      --bg:         #030712;
+      --surface:    #111827;
+      --surface2:   #1f2937;
+      --border:     #374151;
+      --text:       #f9fafb;
+      --muted:      #9ca3af;
+      --success:    #10b981;
+      --gold:       #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+    /* ── Animated gradient bg ── */
+    .hero-bg {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(79,70,229,0.35) 0%, transparent 70%),
+                  radial-gradient(ellipse 40% 40% at 80% 60%, rgba(124,58,237,0.2) 0%, transparent 60%),
+                  var(--bg);
+      overflow: hidden;
+    }
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234f46e5' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    /* ── Navbar ── */
+    .landing-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(3,7,18,0.7);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.3s;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-weight: 800; font-size: 1.3rem; color: var(--text);
+      text-decoration: none;
+    }
+    .nav-brand i { color: var(--primary); font-size: 1.6rem; }
+    .brand-dot { color: var(--accent); }
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+    .btn-nav-login {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600; font-size: 0.875rem;
+      transition: all 0.2s;
+      background: rgba(255,255,255,0.04);
+    }
+    .btn-nav-login:hover { background: rgba(255,255,255,0.1); color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .btn-nav-register {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600; font-size: 0.875rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(79,70,229,0.4);
+    }
+    .btn-nav-register:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,70,229,0.55); color: #fff; }
+
+    /* ── Hero ── */
+    .hero-section {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 1.5rem 5rem;
+    }
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(79,70,229,0.15);
+      border: 1px solid rgba(79,70,229,0.35);
+      border-radius: 999px;
+      padding: 0.4rem 1rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #a5b4fc;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.04em;
+    }
+    .hero-pill span { width: 7px; height: 7px; background: #a5b4fc; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+    .hero-title {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title .grad {
+      background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #22d3ee 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 580px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+    .hero-cta { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+    .btn-hero-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff; text-decoration: none; border-radius: 12px;
+      font-weight: 700; font-size: 1rem;
+      box-shadow: 0 8px 25px rgba(79,70,229,0.45);
+      transition: all 0.25s;
+    }
+    .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(79,70,229,0.6); color: #fff; }
+    .btn-hero-secondary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      border: 1px solid var(--border);
+      color: var(--text); text-decoration: none; border-radius: 12px;
+      font-weight: 600; font-size: 1rem;
+      background: rgba(255,255,255,0.04);
+      transition: all 0.25s;
+    }
+    .btn-hero-secondary:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+    /* ── Stats strip ── */
+    .stats-strip {
+      display: flex; align-items: center; justify-content: center; gap: 2.5rem;
+      margin-top: 4rem;
+      flex-wrap: wrap;
+    }
+    .stat-item { text-align: center; }
+    .stat-item .num { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg,#818cf8,#c084fc); -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+    .stat-item .lbl { font-size: 0.78rem; color: var(--muted); font-weight: 500; margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .stat-sep { width: 1px; height: 40px; background: var(--border); }
+
+    /* ── Features ── */
+    .section { padding: 6rem 1.5rem; position: relative; }
+    .section-label {
+      display: inline-block;
+      padding: 0.3rem 0.9rem;
+      background: rgba(79,70,229,0.12);
+      border: 1px solid rgba(79,70,229,0.3);
+      border-radius: 999px;
+      font-size: 0.75rem; font-weight: 700;
+      color: #a5b4fc; letter-spacing: 0.06em;
+      margin-bottom: 1rem;
+    }
+    .section-title { font-size: clamp(1.75rem,4vw,2.75rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; }
+    .section-sub { font-size: 1rem; color: var(--muted); max-width: 500px; margin: 0 auto 3.5rem; line-height: 1.7; }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      height: 100%;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .feature-card:hover { transform: translateY(-4px); border-color: rgba(79,70,229,0.4); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-card.c1::before { background: linear-gradient(90deg, var(--primary), var(--accent)); }
+    .feature-card.c2::before { background: linear-gradient(90deg, var(--success), #06b6d4); }
+    .feature-card.c3::before { background: linear-gradient(90deg, var(--gold), #f97316); }
+    .feature-card.c4::before { background: linear-gradient(90deg, #ec4899, #8b5cf6); }
+    .feature-card.c5::before { background: linear-gradient(90deg, #06b6d4, #3b82f6); }
+    .feature-card.c6::before { background: linear-gradient(90deg, #10b981, #a3e635); }
+    .feature-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 1.25rem;
+    }
+    .fi-purple { background: rgba(79,70,229,0.15); color: #818cf8; }
+    .fi-green  { background: rgba(16,185,129,0.15); color: #34d399; }
+    .fi-amber  { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .fi-pink   { background: rgba(236,72,153,0.15); color: #f472b6; }
+    .fi-cyan   { background: rgba(6,182,212,0.15);  color: #22d3ee; }
+    .fi-lime   { background: rgba(16,185,129,0.15); color: #a3e635; }
+    .feature-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; }
+    .feature-desc  { font-size: 0.875rem; color: var(--muted); line-height: 1.65; }
+
+    /* ── Role cards ── */
+    .role-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      transition: all 0.3s;
+      height: 100%;
+    }
+    .role-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(0,0,0,0.4); }
+    .role-icon-wrap {
+      width: 80px; height: 80px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; margin: 0 auto 1.5rem;
+    }
+    .ri-student  { background: linear-gradient(135deg, rgba(79,70,229,0.25), rgba(124,58,237,0.15)); color: #818cf8; }
+    .ri-teacher  { background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(6,182,212,0.15)); color: #34d399; }
+    .ri-principal{ background: linear-gradient(135deg, rgba(245,158,11,0.25), rgba(239,68,68,0.15)); color: #fbbf24; }
+    .role-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .role-desc  { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.6; }
+    .role-perks { list-style: none; text-align: left; margin-bottom: 2rem; }
+    .role-perks li { font-size: 0.835rem; color: var(--muted); padding: 0.3rem 0; display: flex; align-items: center; gap: 0.5rem; }
+    .role-perks li i { color: var(--success); font-size: 0.75rem; flex-shrink: 0; }
+    .btn-role {
+      display: inline-block; width: 100%;
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
+      font-weight: 700; font-size: 0.875rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-role-student  { background: rgba(79,70,229,0.15); color: #818cf8; border: 1px solid rgba(79,70,229,0.3); }
+    .btn-role-student:hover  { background: rgba(79,70,229,0.25); color: #818cf8; }
+    .btn-role-teacher  { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .btn-role-teacher:hover  { background: rgba(16,185,129,0.25); color: #34d399; }
+    .btn-role-principal{ background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .btn-role-principal:hover{ background: rgba(245,158,11,0.25); color: #fbbf24; }
+
+    /* ── Footer ── */
+    .landing-footer {
+      padding: 2.5rem 2rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.85rem; color: var(--muted);
+    }
+    .footer-brand { font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+
+    /* ── Floating orbs ── */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      animation: orb-float 8s ease-in-out infinite;
+    }
+    .orb-1 { width:400px;height:400px;background:rgba(79,70,229,0.12);top:-100px;right:-100px;animation-delay:0s; }
+    .orb-2 { width:300px;height:300px;background:rgba(124,58,237,0.1); bottom:-50px;left:-50px;animation-delay:3s; }
+    .orb-3 { width:250px;height:250px;background:rgba(6,182,212,0.08); top:40%;left:60%;animation-delay:5s; }
+    @keyframes orb-float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-20px);} }
+
+    /* ── Responsive ── */
+    @media(max-width:768px){
+      .stats-strip{gap:1.5rem;}
+      .stat-sep{display:none;}
+      .hero-cta{flex-direction:column;align-items:stretch;max-width:280px;margin:0 auto;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<nav class="landing-nav" id="landingNav">
+  <a class="nav-brand" href="{% url 'landing' %}">
+    <i class="bi bi-mortarboard-fill"></i>
+    EduTrack<span class="brand-dot">Pro</span>
+  </a>
+  <div class="nav-actions">
+    <a href="{% url 'login' %}" class="btn-nav-register" id="nav-login-btn">
+      <i class="bi bi-box-arrow-in-right"></i> Staff & Student Login
+    </a>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<div class="hero-bg">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <section class="hero-section">
+    <div>
+      <div class="hero-pill">
+        <span></span> Smart School Management Platform
+      </div>
+      <h1 class="hero-title">
+        Manage Your School<br>
+        <span class="grad">Smarter. Faster. Better.</span>
+      </h1>
+      <p class="hero-sub">
+        EduTrack Pro is an all-in-one institution management system for students, teachers, and principals — with real-time analytics and Google Sheets sync.
+      </p>
+      <div class="hero-cta">
+        <a href="{% url 'login' %}" class="btn-hero-primary" id="hero-login-btn">
+          <i class="bi bi-box-arrow-in-right"></i> Sign In to Your Portal
+        </a>
+        <a href="#roles" class="btn-hero-secondary" id="hero-learn-btn">
+          <i class="bi bi-info-circle"></i> Learn More
+        </a>
+      </div>
+
+      <!-- Live stats -->
+      <div class="stats-strip">
+        <div class="stat-item">
+          <div class="num">{{ stats.total_students }}</div>
+          <div class="lbl">Students Enrolled</div>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <div class="num">{{ stats.total_teachers }}</div>
+          <div class="lbl">Teachers on Staff</div>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <div class="num">{{ stats.total_staff }}</div>
+          <div class="lbl">Support Staff</div>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <div class="num">100%</div>
+          <div class="lbl">Cloud-Synced</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ── Features ── -->
+<section class="section" style="background: var(--surface);">
+  <div class="container">
+    <div class="text-center">
+      <span class="section-label">FEATURES</span>
+      <h2 class="section-title">Everything Your School Needs</h2>
+      <p class="section-sub">A comprehensive platform built for modern educational institutions of every size.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-card c1">
+          <div class="feature-icon fi-purple"><i class="bi bi-people-fill"></i></div>
+          <div class="feature-title">Student Management</div>
+          <p class="feature-desc">Track student records, attendance, marks, fees, documents, and assignments — all in one place with advanced filters.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card c2">
+          <div class="feature-icon fi-green"><i class="bi bi-person-badge-fill"></i></div>
+          <div class="feature-title">Teacher Profiles</div>
+          <p class="feature-desc">Complete faculty directory with subjects, qualifications, experience, bio, achievements, and employment details.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card c3">
+          <div class="feature-icon fi-amber"><i class="bi bi-building"></i></div>
+          <div class="feature-title">Staff Directory</div>
+          <p class="feature-desc">Manage all support staff across departments — admin, security, housekeeping, IT, transport, and more.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card c4">
+          <div class="feature-icon fi-pink"><i class="bi bi-graph-up-arrow"></i></div>
+          <div class="feature-title">Analytics Dashboard</div>
+          <p class="feature-desc">Real-time charts showing attendance trends, academic performance, gender ratios, and fee collection status.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card c5">
+          <div class="feature-icon fi-cyan"><i class="bi bi-table"></i></div>
+          <div class="feature-title">Google Sheets Sync</div>
+          <p class="feature-desc">Every record is automatically synced to Google Sheets — Students, Teachers, Staff, Documents, and Logs tabs.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card c6">
+          <div class="feature-icon fi-lime"><i class="bi bi-shield-lock-fill"></i></div>
+          <div class="feature-title">Role-Based Access</div>
+          <p class="feature-desc">Student, Teacher, Staff, and Principal roles each see only what's relevant to them — secure and streamlined.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Role selection ── -->
+<section class="section" id="roles">
+  <div class="container">
+    <div class="text-center">
+      <span class="section-label">ACCESS</span>
+      <h2 class="section-title">Who Uses EduTrack Pro?</h2>
+      <p class="section-sub">Each role has a tailored experience. Accounts are created by the Principal — contact your institution admin for access.</p>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <!-- Student -->
+      <div class="col-md-4">
+        <div class="role-card">
+          <div class="role-icon-wrap ri-student"><i class="bi bi-mortarboard-fill"></i></div>
+          <div class="role-title">Student</div>
+          <p class="role-desc">Access your academic records, term marks, announcements, and assignments in a clean personal dashboard.</p>
+          <ul class="role-perks">
+            <li><i class="bi bi-check-circle-fill"></i> View quarterly &amp; annual marks</li>
+            <li><i class="bi bi-check-circle-fill"></i> Access submitted assignments</li>
+            <li><i class="bi bi-check-circle-fill"></i> Read school announcements</li>
+            <li><i class="bi bi-check-circle-fill"></i> View your uploaded documents</li>
+          </ul>
+          <a href="{% url 'login' %}" class="btn-role btn-role-student" id="student-login-btn">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Student Login
+          </a>
+        </div>
+      </div>
+      <!-- Teacher -->
+      <div class="col-md-4">
+        <div class="role-card">
+          <div class="role-icon-wrap ri-teacher"><i class="bi bi-person-video3"></i></div>
+          <div class="role-title">Teacher</div>
+          <p class="role-desc">Enter marks, manage assignments, view section performance analytics, and post announcements.</p>
+          <ul class="role-perks">
+            <li><i class="bi bi-check-circle-fill"></i> Enter quarterly / annual marks</li>
+            <li><i class="bi bi-check-circle-fill"></i> Compare section performance</li>
+            <li><i class="bi bi-check-circle-fill"></i> Post announcements to students</li>
+            <li><i class="bi bi-check-circle-fill"></i> Access full analytics</li>
+          </ul>
+          <a href="{% url 'login' %}" class="btn-role btn-role-teacher" id="teacher-login-btn">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Teacher Login
+          </a>
+        </div>
+      </div>
+      <!-- Principal -->
+      <div class="col-md-4">
+        <div class="role-card" style="border-color: rgba(245,158,11,0.3);">
+          <div class="role-icon-wrap ri-principal"><i class="bi bi-award-fill"></i></div>
+          <div class="role-title">Principal</div>
+          <p class="role-desc">Full administrative control — admit students, manage sections, teachers, staff, and fee status.</p>
+          <ul class="role-perks">
+            <li><i class="bi bi-check-circle-fill"></i> Complete admission workflow</li>
+            <li><i class="bi bi-check-circle-fill"></i> Manage sections &amp; assign teachers</li>
+            <li><i class="bi bi-check-circle-fill"></i> Monitor all fees (cash/check/online)</li>
+            <li><i class="bi bi-check-circle-fill"></i> Create all user accounts</li>
+          </ul>
+          <a href="{% url 'login' %}" class="btn-role btn-role-principal" id="principal-login-btn">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Principal Login
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notice -->
+    <div class="text-center mt-5" style="padding: 1.5rem; background: rgba(79,70,229,0.08); border: 1px solid rgba(79,70,229,0.2); border-radius: 16px; max-width: 600px; margin: 3rem auto 0;">
+      <i class="bi bi-shield-lock-fill" style="color:#818cf8;font-size:1.5rem;"></i>
+      <h5 style="font-weight:700;margin-top:0.75rem;">Accounts are managed by your institution</h5>
+      <p style="color:var(--muted);font-size:0.875rem;margin-bottom:0;">Only the Principal can create accounts for students, teachers, and staff. Please contact your school administration if you need access.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer class="landing-footer">
+  <div class="footer-brand"><i class="bi bi-mortarboard-fill me-1"></i> EduTrack Pro</div>
+  <div>© 2026 EduTrack Pro. Built for modern institutions.</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Navbar scroll effect
+  const nav = document.getElementById('landingNav');
+  window.addEventListener('scroll', () => {
+    nav.style.background = window.scrollY > 50
+      ? 'rgba(3,7,18,0.95)' : 'rgba(3,7,18,0.7)';
+  });
+
+  // Pre-fill role in register link from ?role param
+  const params = new URLSearchParams(location.search);
+  if(params.get('role')) {
+    document.querySelectorAll('a[href*="register"]').forEach(a => {
+      const u = new URL(a.href);
+      u.searchParams.set('role', params.get('role'));
+      a.href = u.toString();
+    });
+  }
+</script>
+</body>
+</html>

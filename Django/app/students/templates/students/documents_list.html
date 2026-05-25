@@ -1,0 +1,93 @@
+{% extends "students/base_auth.html" %}
+{% block title %}Documents · EduTrack{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center gap-3 mb-4">
+  <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;">
+    <i class="bi bi-file-earmark-text" style="color:#fff;font-size:1.2rem;"></i>
+  </div>
+  <div>
+<h2 class="mb-1">Documents ({{ total_count }}{% if shown_count != total_count %} → {{ shown_count }}{% endif %})</h2>
+    <p class="mb-0" style="color:var(--muted);">Manage student documents and proofs</p>
+  </div>
+</div>
+
+<!-- Add Button + Search -->
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <a href="{% url 'add_document' %}" class="btn btn-success">
+      <i class="bi bi-plus-circle me-2"></i>Add Document
+    </a>
+  </div>
+  <div class="col-md-5">
+    <form method="GET" class="search-form">
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input type="text" class="form-control" name="q" value="{{ request.GET.q }}" placeholder="Search by student name or doc type…">
+        <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-arrow-right-short"></i></button>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-3">
+    <select class="form-select" name="doc_type" onchange="this.form.submit()" style="max-width:200px;">
+      <option value="">All Types</option>
+      {% for value, label in doc_types %}
+        <option value="{{ value }}" {% if request.GET.doc_type == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+<!-- Results Table -->
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Student</th>
+          <th>Type</th>
+          <th>File</th>
+          <th>Upload Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for doc in documents %}
+        {% ifchanged doc.student.class_name %}
+        <tr class="table-secondary">
+          <td colspan="4" class="fw-bold text-dark py-2">
+            <i class="bi bi-diagram-3 me-2"></i>{{ doc.student.class_name|default:"Uncategorized (No Class Assigned)" }}
+          </td>
+        </tr>
+        {% endifchanged %}
+        <tr>
+          <td>
+            <strong>{{ doc.student.name }}</strong><br>
+            <small class="text-muted">{{ doc.student.email }}</small>
+          </td>
+          <td>
+            <span class="badge bg-light text-dark px-2 py-1">{{ doc.get_doc_type_display }}</span>
+          </td>
+          <td>
+            {% if doc.file_url %}
+            <a href="{{ doc.file_url }}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-file-earmark-arrow-down me-1"></i>View Document</a>
+            {% else %}
+            <span class="text-muted">No File</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="text-muted">{{ doc.upload_date|date:"M d, Y" }}</span>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="text-center py-5 text-muted">
+            <i class="bi bi-file-earmark-x fs-1 mb-3 opacity-50 d-block"></i>
+            No documents found
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

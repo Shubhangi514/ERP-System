@@ -1,0 +1,54 @@
+{% extends 'students/base_auth.html' %}
+{% block title %}Post Announcement – EduTrack Pro{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h1 style="font-size:1.75rem;font-weight:800;margin:0;">
+    <i class="bi bi-megaphone-fill me-2" style="color:#f59e0b;"></i>Post Announcement
+  </h1>
+  <a href="{% url 'announcement_list' %}" class="btn btn-sm btn-outline-light">
+    <i class="bi bi-arrow-left me-1"></i> Back
+  </a>
+</div>
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header">
+        <h4><i class="bi bi-send-fill me-2" style="color:#f59e0b;"></i>New Announcement</h4>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" name="title" class="form-control" required maxlength="300"
+                   placeholder="e.g. Annual Sports Day – Date Change">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Message</label>
+            <textarea name="body" class="form-control" rows="5" required
+                      placeholder="Write the full announcement here..."></textarea>
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Audience</label>
+            <select name="audience" class="form-select">
+              {% for code, label in audiences %}
+              <option value="{{ code }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:0.4rem;">
+              "Everyone" means all logged-in users will see this announcement.
+            </div>
+          </div>
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-primary flex-fill">
+              <i class="bi bi-send-fill me-1"></i> Post Announcement
+            </button>
+            <a href="{% url 'announcement_list' %}" class="btn btn-outline-light">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
