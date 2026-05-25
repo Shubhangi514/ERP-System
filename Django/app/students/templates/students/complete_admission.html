@@ -1,0 +1,100 @@
+{% extends 'students/base_auth.html' %}
+{% block title %}Complete Admission – {{ student.name }} – EduTrack Pro{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h1 style="font-size:1.75rem;font-weight:800;margin:0;">
+    <i class="bi bi-person-check-fill me-2" style="color:#818cf8;"></i>Complete Admission
+  </h1>
+  <a href="{% url 'admission_list' %}" class="btn btn-sm btn-outline-light">
+    <i class="bi bi-arrow-left me-1"></i> Back
+  </a>
+</div>
+
+<div class="row g-4">
+  <!-- Student info card -->
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header"><h4><i class="bi bi-person-fill me-2" style="color:#818cf8;"></i>Student Info</h4></div>
+      <div class="card-body">
+        <div class="mb-3 text-center">
+          {% if student.profile_picture %}
+            <img src="{{ student.profile_picture.url }}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid rgba(129,140,248,0.4);" alt="{{ student.name }}"/>
+          {% else %}
+            <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#818cf8,#c084fc);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;color:#fff;margin:0 auto;">
+              {{ student.name|first|upper }}
+            </div>
+          {% endif %}
+          <h5 style="margin-top:1rem;font-weight:700;">{{ student.name }}</h5>
+          <div style="color:var(--muted);font-size:.875rem;">{{ student.course }}</div>
+        </div>
+        <div class="mb-2">
+          <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;">Email</div>
+          <div style="font-weight:600;font-size:.875rem;">{{ student.email }}</div>
+        </div>
+        <div class="mb-2">
+          <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;">Age</div>
+          <div style="font-weight:600;font-size:.875rem;">{{ student.age }} years</div>
+        </div>
+        <div class="mb-2">
+          <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;">Gender</div>
+          <div style="font-weight:600;font-size:.875rem;">{{ student.gender_label }}</div>
+        </div>
+        {% if student.admission_number %}
+        <div class="mb-2">
+          <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;">Admission No.</div>
+          <div style="font-weight:700;color:#34d399;">{{ student.admission_number }}</div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Admission Form -->
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h4><i class="bi bi-grid-3x3-gap me-2" style="color:#22d3ee;"></i>Assign Section & Finalize</h4>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Admission Number</label>
+            <input type="text" name="admission_number" class="form-control"
+                   value="{{ student.admission_number|default:'' }}"
+                   placeholder="Auto-generated if left blank (e.g. ADM0042)">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Admission Date</label>
+            <input type="date" name="admission_date" class="form-control"
+                   value="{{ student.admission_date|date:'Y-m-d'|default:'' }}">
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Assign to Section <span style="color:#f87171;">*</span></label>
+            <select name="section_id" class="form-select" required>
+              <option value="">— Select Section —</option>
+              {% for sec in sections %}
+              <option value="{{ sec.pk }}" {% if student.section.pk == sec.pk %}selected{% endif %}>
+                {{ sec }} ({{ sec.student_count }}/{{ sec.capacity }} students)
+              </option>
+              {% endfor %}
+            </select>
+            {% if not sections %}
+            <div style="font-size:.78rem;color:#f87171;margin-top:.4rem;">
+              No sections available. <a href="{% url 'add_section' %}" style="color:#818cf8;">Create one first →</a>
+            </div>
+            {% endif %}
+          </div>
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-primary flex-fill">
+              <i class="bi bi-check-circle-fill me-1"></i> Complete Admission
+            </button>
+            <a href="{% url 'admission_list' %}" class="btn btn-outline-light">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

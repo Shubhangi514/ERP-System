@@ -1,0 +1,58 @@
+{% extends 'students/base_auth.html' %}
+{% block title %}Create User Account – EduTrack Pro{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h1 style="font-size:1.75rem;font-weight:800;margin:0;">
+    <i class="bi bi-key-fill me-2" style="color:#fbbf24;"></i>Create User Account
+  </h1>
+  <a href="{% url 'principal_dashboard' %}" class="btn btn-sm btn-outline-light">
+    <i class="bi bi-arrow-left me-1"></i> Back
+  </a>
+</div>
+<div class="row justify-content-center">
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-header">
+        <h4><i class="bi bi-person-plus-fill me-2" style="color:#fbbf24;"></i>New Login Account</h4>
+      </div>
+      <div class="card-body">
+        <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);border-radius:10px;padding:0.75rem 1rem;margin-bottom:1.25rem;font-size:.82rem;color:#fbbf24;">
+          <i class="bi bi-shield-lock-fill me-1"></i>
+          Only the Principal can create accounts. Students, teachers, and staff must be provided credentials by administration.
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <select name="role" class="form-select" required>
+              {% for code, label in roles %}
+              {% if code != 'principal' %}
+              <option value="{{ code }}">{{ label }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" required
+                   placeholder="e.g. john.doe or student_42">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email (optional)</label>
+            <input type="email" name="email" class="form-control" placeholder="user@school.edu">
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" required minlength="6"
+                   placeholder="Minimum 6 characters">
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-check-circle-fill me-1"></i> Create Account
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

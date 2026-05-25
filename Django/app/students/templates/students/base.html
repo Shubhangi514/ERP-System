@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Student Management System{% endblock %}</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary:    #4f46e5;
+      --primary-dk: #3730a3;
+      --accent:     #7c3aed;
+      --bg:         #0f172a;
+      --surface:    #1e293b;
+      --surface2:   #273548;
+      --border:     #334155;
+      --text:       #f1f5f9;
+      --muted:      #94a3b8;
+      --success:    #10b981;
+      --danger:     #ef4444;
+      --warning:    #f59e0b;
+      --info:       #3b82f6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Navbar ── */
+    .navbar {
+      background: linear-gradient(135deg, var(--primary-dk) 0%, var(--accent) 100%);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding: 0.85rem 1.5rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,.4);
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -.3px;
+      color: #fff !important;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .navbar-brand .bi { font-size: 1.4rem; }
+    .nav-link {
+      color: rgba(255,255,255,.85) !important;
+      font-weight: 500;
+      font-size: .9rem;
+      padding: .4rem .8rem !important;
+      border-radius: 8px;
+      transition: background .2s;
+    }
+    .nav-link:hover, .nav-link.active {
+      background: rgba(255,255,255,.15);
+      color: #fff !important;
+    }
+
+    /* ── Main content ── */
+/* Sidebar Styles */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 260px;
+  background: linear-gradient(180deg, var(--surface2) 0%, var(--bg) 100%);
+  border-right: 1px solid var(--border);
+  z-index: 1030;
+  transition: transform 0.3s ease;
+}
+.sidebar-inner {
+  padding: 1.5rem;
+  height: 100%;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--text);
+  text-decoration: none;
+}
+.sidebar-brand i { color: var(--primary); }
+.sidebar-nav a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s;
+}
+.sidebar-nav a:hover, .sidebar-nav a.active {
+  background: var(--surface);
+  color: var(--text);
+  transform: translateX(4px);
+}
+.sidebar-nav a i { width: 20px; margin-right: 12px; }
+.sidebar-toggle {
+  position: fixed;
+  left: 260px;
+  top: 1rem;
+  z-index: 1031;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+
+.main-wrap { 
+  padding: 2rem 1.5rem; 
+  margin-left: 260px;
+  max-width: calc(1400px - 260px);
+  transition: margin-left 0.3s ease; 
+}
+@media (max-width: 992px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.show { transform: translateX(0); }
+  .main-wrap { margin-left: 0; }
+  .sidebar-toggle { left: 1rem; }
+}
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.3);
+    }
+    .card-header {
+      background: linear-gradient(135deg, rgba(79,70,229,.25) 0%, rgba(124,58,237,.15) 100%);
+      border-bottom: 1px solid var(--border);
+      border-radius: 16px 16px 0 0 !important;
+      padding: 1.25rem 1.5rem;
+    }
+    .card-header h4 { font-weight: 700; font-size: 1.1rem; margin: 0; }
+    .card-body { padding: 1.75rem; }
+
+    /* ── Form controls ── */
+    .form-label { font-weight: 500; font-size: .85rem; color: var(--muted); margin-bottom: .35rem; }
+    .form-control, .form-select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: .65rem 1rem;
+      font-size: .9rem;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .form-control:focus, .form-select:focus {
+      background: var(--surface2);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79,70,229,.25);
+      color: var(--text);
+      outline: none;
+    }
+    .form-control::placeholder { color: var(--muted); opacity: .7; }
+    .form-select option { background: var(--surface2); color: var(--text); }
+
+    /* ── Buttons ── */
+    .btn {
+      font-weight: 600;
+      font-size: .85rem;
+      border-radius: 10px;
+      padding: .55rem 1.25rem;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      border: none;
+      box-shadow: 0 4px 12px rgba(79,70,229,.4);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 18px rgba(79,70,229,.55); background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%); }
+    .btn-outline-light { border: 1px solid var(--border); color: var(--text); }
+    .btn-outline-light:hover { background: var(--surface2); color: var(--text); }
+    .btn-success { background: var(--success); border: none; box-shadow: 0 4px 12px rgba(16,185,129,.3); }
+    .btn-danger  { background: var(--danger);  border: none; box-shadow: 0 4px 12px rgba(239,68,68,.3);  }
+    .btn-warning { background: var(--warning); border: none; color: #000; }
+    .btn-info    { background: var(--info);    border: none; box-shadow: 0 4px 12px rgba(59,130,246,.3); }
+    .btn-sm { padding: .35rem .75rem; font-size: .8rem; border-radius: 8px; }
+
+    /* ── Table ── */
+    .table-dark-custom {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: .875rem;
+    }
+    .table-dark-custom thead th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: .85rem 1rem;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+    .table-dark-custom tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+    .table-dark-custom tbody tr:hover { background: var(--surface2); }
+    .table-dark-custom td {
+      padding: .8rem 1rem;
+      vertical-align: middle;
+      color: var(--text);
+    }
+    .table-dark-custom tbody tr:last-child { border-bottom: none; }
+
+    /* ── Badges ── */
+    .badge-custom {
+      display: inline-block;
+      padding: .3rem .75rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+    .badge-high   { background: rgba(16,185,129,.15);  color: #34d399; }
+    .badge-mid    { background: rgba(245,158,11,.15);  color: #fbbf24; }
+    .badge-low    { background: rgba(239,68,68,.15);   color: #f87171; }
+
+    /* ── Filter panel ── */
+    .filter-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .filter-panel .filter-title {
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Stats strip ── */
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.1rem 1.4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 14px 14px 0 0;
+    }
+    .stat-card.c1::before { background: linear-gradient(90deg, var(--primary), var(--accent)); }
+    .stat-card.c2::before { background: linear-gradient(90deg, var(--success), #06b6d4); }
+    .stat-card.c3::before { background: linear-gradient(90deg, var(--warning), #f97316); }
+    .stat-card.c4::before { background: linear-gradient(90deg, var(--info), #8b5cf6); }
+    .stat-card .stat-num { font-size: 1.9rem; font-weight: 700; line-height: 1; }
+    .stat-card .stat-lbl { font-size: .78rem; color: var(--muted); margin-top: .25rem; font-weight: 500; }
+
+    /* ── Avatar ── */
+    .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .85rem; color: #fff;
+      flex-shrink: 0;
+    }
+
+    /* ── Progress bars ── */
+    .mini-bar {
+      height: 5px;
+      border-radius: 999px;
+      background: var(--border);
+      margin-top: 4px;
+    }
+    .mini-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    /* ── Alerts ── */
+    .alert-custom {
+      border-radius: 12px;
+      border: none;
+      font-size: .875rem;
+      padding: .85rem 1.1rem;
+    }
+
+    /* ── Modal ── */
+    .modal-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      color: var(--text);
+    }
+    .modal-header { border-bottom: 1px solid var(--border); }
+    .modal-footer { border-top: 1px solid var(--border); }
+
+    /* ── Pagination ── */
+    .page-link {
+      background: var(--surface);
+      border-color: var(--border);
+      color: var(--text);
+      border-radius: 8px !important;
+      margin: 0 2px;
+    }
+    .page-link:hover { background: var(--surface2); color: var(--text); border-color: var(--primary); }
+    .page-item.active .page-link { background: var(--primary); border-color: var(--primary); }
+
+    /* ── Divider ── */
+    .divider { border-color: var(--border); }
+
+    /* ── Input group text ── */
+    .input-group-text {
+      background: var(--surface2);
+      border-color: var(--border);
+      color: var(--muted);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .main-wrap { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar Navigation -->
+<div class="sidebar d-flex">
+  <div class="sidebar-inner" id="sidebar">
+    <div class="sidebar-brand mb-4">
+      <a href="{% url 'dashboard' %}">
+        <i class="bi bi-mortarboard-fill fs-3 me-2"></i>
+        <span>EduTrack Pro</span>
+      </a>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <i class="bi bi-house-door"></i> Dashboard
+      </a>
+      <a href="{% url 'students_list' %}" class="nav-link {% if request.resolver_match.url_name == 'students_list' %}active{% endif %}">
+        <i class="bi bi-people"></i> Students
+      </a>
+      <a href="{% url 'documents_list' %}" class="nav-link {% if request.resolver_match.url_name == 'documents_list' %}active{% endif %}">
+        <i class="bi bi-file-earmark-text"></i> Documents
+      </a>
+      <a href="{% url 'assignments_list' %}" class="nav-link {% if request.resolver_match.url_name == 'assignments_list' %}active{% endif %}">
+        <i class="bi bi-journal-text"></i> Assignments
+      </a>
+      <a href="{% url 'logs_list' %}" class="nav-link {% if request.resolver_match.url_name == 'logs_list' %}active{% endif %}">
+        <i class="bi bi-clock-history"></i> Logs
+      </a>
+    </nav>
+    
+    <div class="sidebar-footer mt-auto">
+      <div class="dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+          <i class="bi bi-gear"></i> Settings
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{% url 'add_student' %}"><i class="bi bi-plus-circle me-2"></i>Add Student</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Mobile toggle -->
+  <button class="sidebar-toggle d-lg-none" id="sidebarToggle">
+    <i class="bi bi-list"></i>
+  </button>
+</div>
+
+<!-- Page body -->
+<div class="main-wrap">
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert alert-custom alert-{{ msg.tags }} alert-dismissible fade show mb-3" role="alert"
+           style="background:rgba(79,70,229,.12);border:1px solid rgba(79,70,229,.3);">
+        <i class="bi bi-info-circle me-2"></i>{{ msg }}
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Apply data-width to elements without breaking CSS linting
+  document.querySelectorAll('.apply-width').forEach(el => {
+    if (el.dataset.width) {
+      el.style.width = el.dataset.width;
+    }
+  });
+</script>
+{% block extra_js %}
+<script src="/static/students/js/app.js"></script>
+{% endblock %}
+</body>
+</html>

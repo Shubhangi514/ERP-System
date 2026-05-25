@@ -1,0 +1,138 @@
+{% extends 'students/base_auth.html' %}
+{% block title %}Enter Marks – {{ student.name }} – EduTrack Pro{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 style="font-size:1.75rem;font-weight:800;margin:0;letter-spacing:-0.02em;">
+      <i class="bi bi-pencil-square me-2" style="color:#818cf8;"></i>Enter Marks
+    </h1>
+    <p style="color:var(--muted);font-size:0.875rem;margin-top:0.25rem;">
+      Student: <strong style="color:var(--text);">{{ student.name }}</strong> &mdash;
+      {{ student.section_label }} &mdash; {{ student.class_name|default:"No Class" }}
+    </p>
+  </div>
+  <a href="{% url 'students_list' %}" class="btn btn-sm btn-outline-light">
+    <i class="bi bi-arrow-left me-1"></i> Back
+  </a>
+</div>
+
+<div class="row g-4">
+  <!-- Entry Form -->
+  <div class="col-md-5">
+    <div class="card">
+      <div class="card-header">
+        <h4><i class="bi bi-plus-circle me-2" style="color:#34d399;"></i>Add / Update Marks</h4>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Subject</label>
+            <select name="subject" class="form-select" required>
+              <option value="">— Select Subject —</option>
+              {% for s in subjects %}
+              <option value="{{ s }}">{{ s }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Term / Exam</label>
+            <select name="term" class="form-select" required>
+              <option value="">— Select Term —</option>
+              {% for code, label in terms %}
+              <option value="{{ code }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-6">
+              <label class="form-label">Max Marks</label>
+              <input type="number" name="max_marks" class="form-control" value="100" min="1" required>
+            </div>
+            <div class="col-6">
+              <label class="form-label">Marks Obtained</label>
+              <input type="number" name="marks_obtained" class="form-control" step="0.1" min="0" required placeholder="e.g. 87">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Remarks (optional)</label>
+            <textarea name="remarks" class="form-control" rows="2" placeholder="e.g. Excellent performance"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-floppy-fill me-1"></i> Save Marks
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Existing Marks Table -->
+  <div class="col-md-7">
+    <div class="card">
+      <div class="card-header">
+        <h4><i class="bi bi-list-check me-2" style="color:#818cf8;"></i>Recorded Marks</h4>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table-dark-custom w-100">
+            <thead>
+              <tr>
+                <th>Subject</th><th>Term</th><th>Marks</th><th>%</th><th>Grade</th><th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for mark in existing_marks %}
+              <tr>
+                <td><strong>{{ mark.subject }}</strong></td>
+                <td><span class="badge-custom badge-mid" style="font-size:.72rem;">{{ mark.get_term_display }}</span></td>
+                <td style="color:var(--text);">{{ mark.marks_obtained }}/{{ mark.max_marks }}</td>
+                <td>
+                  <span class="badge-custom {% if mark.percentage >= 75 %}badge-high{% elif mark.percentage >= 50 %}badge-mid{% else %}badge-low{% endif %}">
+                    {{ mark.percentage }}%
+                  </span>
+                </td>
+                <td style="font-weight:800;color:{% if mark.percentage >= 75 %}#34d399{% elif mark.percentage >= 50 %}#fbbf24{% else %}#f87171{% endif %};">
+                  {{ mark.grade }}
+                </td>
+                <td style="font-size:.82rem;color:var(--muted);">{{ mark.remarks|default:"—" }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="6" style="text-align:center;color:var(--muted);padding:2rem;">
+                  No marks recorded yet. Use the form to add marks.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    {% if existing_marks %}
+    <div class="row g-3 mt-2">
+      <div class="col-4">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
+          <div style="font-size:1.4rem;font-weight:800;color:#818cf8;">{{ existing_marks|length }}</div>
+          <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;">Entries</div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
+          <div style="font-size:1.4rem;font-weight:800;color:#34d399;">{{ student.marks }}%</div>
+          <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;">Overall Avg</div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
+          <div style="font-size:1.4rem;font-weight:800;color:#22d3ee;">{{ student.attendance }}%</div>
+          <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;">Attendance</div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

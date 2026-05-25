@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register – EduTrack Pro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary: #4f46e5; --accent: #7c3aed;
+      --bg: #030712; --surface: #111827; --surface2: #1f2937;
+      --border: #374151; --text: #f9fafb; --muted: #9ca3af;
+      --success: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(79,70,229,0.3) 0%, transparent 70%), var(--bg);
+      color: var(--text); min-height: 100vh;
+      display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;
+    }
+    .auth-wrapper { width: 100%; max-width: 500px; }
+    .auth-logo { text-align: center; margin-bottom: 2rem; }
+    .auth-logo a { text-decoration: none; color: var(--text); display: inline-flex; align-items: center; gap: 0.5rem; }
+    .auth-logo i { font-size: 2rem; color: var(--primary); }
+    .auth-logo span { font-size: 1.4rem; font-weight: 800; }
+    .dot { color: var(--accent); }
+    .auth-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 2.5rem 2rem;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    }
+    .auth-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.4rem; }
+    .auth-sub   { font-size: 0.875rem; color: var(--muted); margin-bottom: 2rem; }
+
+    /* Role selector */
+    .role-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; margin-bottom: 1.75rem; }
+    .role-opt { display: none; }
+    .role-lbl {
+      display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+      padding: 0.85rem 0.5rem;
+      background: var(--surface2); border: 1.5px solid var(--border);
+      border-radius: 12px; cursor: pointer; transition: all 0.2s;
+      font-size: 0.8rem; font-weight: 600; color: var(--muted);
+      text-align: center;
+    }
+    .role-lbl i { font-size: 1.3rem; }
+    .role-opt:checked + .role-lbl { border-color: var(--primary); background: rgba(79,70,229,0.12); color: #818cf8; }
+    #rol-teacher:checked + .role-lbl { border-color: #10b981; background: rgba(16,185,129,0.1); color: #34d399; }
+    #rol-principal:checked + .role-lbl { border-color: #f59e0b; background: rgba(245,158,11,0.1); color: #fbbf24; }
+    #rol-staff:checked + .role-lbl { border-color: #06b6d4; background: rgba(6,182,212,0.1); color: #22d3ee; }
+
+    .form-label { font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: 0.35rem; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-group { margin-bottom: 1rem; }
+    .input-wrap { position: relative; }
+    .input-wrap i.ic { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.9rem; pointer-events: none; }
+    .form-control {
+      width: 100%; padding: 0.7rem 1rem 0.7rem 2.6rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); border-radius: 10px; font-family: 'Inter',sans-serif;
+      font-size: 0.9rem; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.2); background: var(--surface2); color: var(--text); }
+    .form-control::placeholder { color: var(--muted); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .btn-submit {
+      width: 100%; padding: 0.8rem;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border: none; border-radius: 12px; color: #fff;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 8px 20px rgba(79,70,229,0.4);
+      transition: all 0.25s; margin-top: 0.5rem;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(79,70,229,0.55); }
+    .auth-footer { text-align: center; margin-top: 1.5rem; font-size: 0.86rem; color: var(--muted); }
+    .auth-footer a { color: #818cf8; text-decoration: none; font-weight: 600; }
+    .auth-footer a:hover { text-decoration: underline; }
+    .alert-err {
+      background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5; border-radius: 10px; padding: 0.75rem 1rem;
+      font-size: 0.85rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .section-divider {
+      font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.08em; margin: 1.25rem 0 0.75rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .section-divider::before, .section-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+  </style>
+</head>
+<body>
+<div class="auth-wrapper">
+  <div class="auth-logo">
+    <a href="{% url 'landing' %}">
+      <i class="bi bi-mortarboard-fill"></i>
+      <span>EduTrack<span class="dot">Pro</span></span>
+    </a>
+  </div>
+
+  <div class="auth-card">
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-sub">Join EduTrack Pro — select your role to get started</p>
+
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert-err"><i class="bi bi-exclamation-circle"></i>{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" action="{% url 'register' %}" id="registerForm">
+      {% csrf_token %}
+
+      <!-- Role selection -->
+      <div class="section-divider">Select Your Role</div>
+      <div class="role-grid">
+        <div>
+          <input type="radio" name="role" id="rol-student" class="role-opt" value="student" checked/>
+          <label for="rol-student" class="role-lbl">
+            <i class="bi bi-mortarboard-fill"></i> Student
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="role" id="rol-teacher" class="role-opt" value="teacher"/>
+          <label for="rol-teacher" class="role-lbl">
+            <i class="bi bi-person-video3"></i> Teacher
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="role" id="rol-principal" class="role-opt" value="principal"/>
+          <label for="rol-principal" class="role-lbl">
+            <i class="bi bi-award-fill"></i> Principal
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="role" id="rol-staff" class="role-opt" value="staff"/>
+          <label for="rol-staff" class="role-lbl">
+            <i class="bi bi-person-gear"></i> Staff
+          </label>
+        </div>
+      </div>
+
+      <!-- Account details -->
+      <div class="section-divider">Account Details</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <div class="input-wrap">
+            <i class="bi bi-person ic"></i>
+            <input type="text" name="username" class="form-control" placeholder="username" required id="reg-username"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <div class="input-wrap">
+            <i class="bi bi-envelope ic"></i>
+            <input type="email" name="email" class="form-control" placeholder="email@school.com" id="reg-email"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrap">
+            <i class="bi bi-lock ic"></i>
+            <input type="password" name="password1" class="form-control" placeholder="Create password" required id="reg-password1"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <div class="input-wrap">
+            <i class="bi bi-lock-fill ic"></i>
+            <input type="password" name="password2" class="form-control" placeholder="Repeat password" required id="reg-password2"/>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="register-submit-btn">
+        <i class="bi bi-person-check me-2"></i>Create Account
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account? <a href="{% url 'login' %}" id="go-login">Sign in →</a>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:1.5rem;">
+    <a href="{% url 'landing' %}" style="color:var(--muted);font-size:0.8rem;text-decoration:none;">
+      <i class="bi bi-arrow-left me-1"></i>Back to home
+    </a>
+  </div>
+</div>
+
+<script>
+  // Pre-check role from URL param
+  const role = new URLSearchParams(location.search).get('role');
+  if (role) {
+    const r = document.getElementById('rol-' + role);
+    if (r) r.checked = true;
+  }
+</script>
+</body>
+</html>

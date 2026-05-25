@@ -1,0 +1,132 @@
+{% extends 'students/base_auth.html' %}
+{% block title %}Support Staff – EduTrack Pro{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+  <div>
+    <h1 style="font-size:1.6rem;font-weight:800;margin:0;letter-spacing:-0.02em;">
+      <i class="bi bi-people-fill me-2" style="color:#22d3ee;"></i>Support Staff
+    </h1>
+    <p style="color:var(--muted);font-size:0.875rem;margin-top:0.2rem;">
+      Showing {{ shown_count }} of {{ total_count }} staff members
+    </p>
+  </div>
+  <a href="{% url 'add_staff' %}" class="btn btn-info" id="add-staff-btn" style="color:#fff;">
+    <i class="bi bi-plus-circle me-1"></i>Add Staff
+  </a>
+</div>
+
+<!-- Filters -->
+<form method="get" class="filter-panel mb-4">
+  <div class="filter-title"><i class="bi bi-funnel me-1"></i>Filter &amp; Search</div>
+  <div class="row g-2">
+    <div class="col-md-3">
+      <input type="text" name="q" class="form-control" placeholder="Search name / email / ID / designation…" value="{{ request.GET.q }}"/>
+    </div>
+    <div class="col-md-2">
+      <select name="department" class="form-select">
+        <option value="">All Departments</option>
+        {% for v,l in departments %}<option value="{{ v }}" {% if request.GET.department == v %}selected{% endif %}>{{ l }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select name="emp_type" class="form-select">
+        <option value="">All Types</option>
+        {% for v,l in employment_types %}<option value="{{ v }}" {% if request.GET.emp_type == v %}selected{% endif %}>{{ l }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select name="gender" class="form-select">
+        <option value="">All Genders</option>
+        <option value="M" {% if request.GET.gender == 'M' %}selected{% endif %}>Male</option>
+        <option value="F" {% if request.GET.gender == 'F' %}selected{% endif %}>Female</option>
+        <option value="O" {% if request.GET.gender == 'O' %}selected{% endif %}>Other</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select name="sort" class="form-select">
+        <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Name A–Z</option>
+        <option value="-name" {% if request.GET.sort == '-name' %}selected{% endif %}>Name Z–A</option>
+        <option value="department" {% if request.GET.sort == 'department' %}selected{% endif %}>Department</option>
+        <option value="designation" {% if request.GET.sort == 'designation' %}selected{% endif %}>Designation</option>
+        <option value="date_joined" {% if request.GET.sort == 'date_joined' %}selected{% endif %}>Date Joined</option>
+      </select>
+    </div>
+    <div class="col-md-1">
+      <button type="submit" class="btn btn-primary w-100" id="staff-filter-btn"><i class="bi bi-search"></i></button>
+    </div>
+  </div>
+</form>
+
+<!-- Staff table -->
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-dark-custom w-100">
+        <thead>
+          <tr>
+            <th>Staff Member</th>
+            <th>Designation</th>
+            <th>Department</th>
+            <th>Gender</th>
+            <th>Type</th>
+            <th>Date Joined</th>
+            <th>Contact</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in staff %}
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:.75rem;">
+                {% if s.profile_picture %}
+                  <img src="{{ s.profile_picture.url }}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(6,182,212,0.4);" alt="{{ s.name }}"/>
+                {% else %}
+                  <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(6,182,212,0.3),rgba(59,130,246,0.2));display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#22d3ee;flex-shrink:0;">
+                    {{ s.name|first|upper }}
+                  </div>
+                {% endif %}
+                <div>
+                  <div style="font-weight:600;font-size:.9rem;">{{ s.name }}</div>
+                  <div style="font-size:.75rem;color:var(--muted);">{{ s.employee_id }}</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:.875rem;">{{ s.designation }}</td>
+            <td>
+              <span class="badge-custom badge-mid" style="font-size:.72rem;">{{ s.department }}</span>
+            </td>
+            <td style="font-size:.875rem;color:var(--muted);">{{ s.gender_label }}</td>
+            <td>
+              <span class="badge-custom {% if s.employment_type == 'permanent' %}badge-high{% elif s.employment_type == 'contract' %}badge-mid{% else %}badge-low{% endif %}" style="font-size:.72rem;">
+                {{ s.get_employment_type_display }}
+              </span>
+            </td>
+            <td style="font-size:.82rem;color:var(--muted);">{{ s.date_joined|default:"—" }}</td>
+            <td style="font-size:.82rem;color:var(--muted);">{{ s.email }}</td>
+            <td>
+              <div style="display:flex;gap:.35rem;">
+                <a href="{% url 'staff_detail' s.pk %}" class="btn btn-sm btn-primary" title="View" id="view-staff-{{ s.pk }}"><i class="bi bi-eye"></i></a>
+                <a href="{% url 'edit_staff' s.pk %}" class="btn btn-sm btn-warning" title="Edit" id="edit-staff-{{ s.pk }}"><i class="bi bi-pencil"></i></a>
+                <form method="post" action="{% url 'delete_staff' s.pk %}" onsubmit="return confirm('Delete {{ s.name }}?')">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-danger" title="Delete" id="del-staff-{{ s.pk }}"><i class="bi bi-trash"></i></button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" style="text-align:center;color:var(--muted);padding:2.5rem;">
+              <i class="bi bi-people" style="font-size:2.5rem;display:block;margin-bottom:.75rem;"></i>
+              No staff members found. <a href="{% url 'add_staff' %}" style="color:#818cf8;">Add the first one →</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

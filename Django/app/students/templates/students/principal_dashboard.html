@@ -1,0 +1,332 @@
+{% extends 'students/base_auth.html' %}
+{% block title %}Principal Dashboard – EduTrack Pro{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 style="font-size:1.75rem;font-weight:800;margin:0;letter-spacing:-0.02em;">
+      <i class="bi bi-award-fill me-2" style="color:var(--gold);"></i>Principal Dashboard
+    </h1>
+    <p style="color:var(--muted);font-size:0.875rem;margin-top:0.25rem;">
+      Full institutional overview — {{ request.user.username }}
+    </p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{% url 'add_announcement' %}" class="btn btn-sm" style="background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);border-radius:10px;font-weight:600;">
+      <i class="bi bi-megaphone-fill me-1"></i>Announce
+    </a>
+    <a href="{% url 'add_teacher' %}" class="btn btn-sm" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);border-radius:10px;font-weight:600;">
+      <i class="bi bi-plus-circle me-1"></i>Add Teacher
+    </a>
+    <a href="{% url 'add_staff' %}" class="btn btn-sm" style="background:rgba(6,182,212,0.15);color:#22d3ee;border:1px solid rgba(6,182,212,0.3);border-radius:10px;font-weight:600;">
+      <i class="bi bi-plus-circle me-1"></i>Add Staff
+    </a>
+  </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-card c1">
+      <div style="font-size:0.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;"><i class="bi bi-people-fill me-1"></i>Total Students</div>
+      <div class="stat-num">{{ total_students }}</div>
+      <div class="stat-lbl">Enrolled</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card c2">
+      <div style="font-size:0.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;"><i class="bi bi-person-badge-fill me-1"></i>Teachers</div>
+      <div class="stat-num">{{ total_teachers }}</div>
+      <div class="stat-lbl">Faculty Members</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card c3">
+      <div style="font-size:0.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;"><i class="bi bi-person-gear me-1"></i>Support Staff</div>
+      <div class="stat-num">{{ total_staff }}</div>
+      <div class="stat-lbl">Across Departments</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card c4">
+      <div style="font-size:0.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;"><i class="bi bi-graph-up me-1"></i>Avg. Marks</div>
+      <div class="stat-num">{{ avg_marks }}%</div>
+      <div class="stat-lbl">Student Performance</div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Action Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <a href="{% url 'admission_list' %}" class="text-decoration-none">
+      <div class="card h-100" style="background:linear-gradient(135deg,rgba(129,140,248,0.15),rgba(124,58,237,0.08));border:1px solid rgba(129,140,248,0.3);padding:1.25rem;transition:all 0.3s;">
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <div style="width:48px;height:48px;background:rgba(129,140,248,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#818cf8;flex-shrink:0;"><i class="bi bi-person-plus-fill"></i></div>
+          <div>
+            <div style="font-size:1.3rem;font-weight:800;color:#818cf8;">{{ total_students }}</div>
+            <div style="font-size:.82rem;font-weight:600;color:var(--text);">Admissions</div>
+            <div style="font-size:.72rem;color:var(--muted);">Manage →</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-3">
+    <a href="{% url 'section_list' %}" class="text-decoration-none">
+      <div class="card h-100" style="background:linear-gradient(135deg,rgba(34,211,238,0.15),rgba(59,130,246,0.08));border:1px solid rgba(34,211,238,0.3);padding:1.25rem;transition:all 0.3s;">
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <div style="width:48px;height:48px;background:rgba(34,211,238,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#22d3ee;flex-shrink:0;"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+          <div>
+            <div style="font-size:1.3rem;font-weight:800;color:#22d3ee;">{{ sections|length }}</div>
+            <div style="font-size:.82rem;font-weight:600;color:var(--text);">Sections</div>
+            <div style="font-size:.72rem;color:var(--muted);">View all →</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-3">
+    <a href="{% url 'teacher_list' %}" class="text-decoration-none">
+      <div class="card h-100" style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(6,182,212,0.08));border:1px solid rgba(16,185,129,0.3);padding:1.25rem;transition:all 0.3s;">
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <div style="width:48px;height:48px;background:rgba(16,185,129,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#34d399;flex-shrink:0;"><i class="bi bi-person-badge-fill"></i></div>
+          <div>
+            <div style="font-size:1.3rem;font-weight:800;color:#34d399;">{{ total_teachers }}</div>
+            <div style="font-size:.82rem;font-weight:600;color:var(--text);">Teachers</div>
+            <div style="font-size:.72rem;color:var(--muted);">View all →</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-3">
+    <a href="{% url 'fee_management' %}" class="text-decoration-none">
+      <div class="card h-100" style="background:linear-gradient(135deg,rgba(52,211,153,0.15),rgba(16,185,129,0.08));border:1px solid rgba(52,211,153,0.3);padding:1.25rem;transition:all 0.3s;">
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <div style="width:48px;height:48px;background:rgba(52,211,153,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#34d399;flex-shrink:0;"><i class="bi bi-cash-coin"></i></div>
+          <div>
+            <div style="font-size:1.3rem;font-weight:800;color:#34d399;">{{ fees_paid }}</div>
+            <div style="font-size:.82rem;font-weight:600;color:var(--text);">Fees Paid</div>
+            <div style="font-size:.72rem;color:#f87171;">{{ fees_unpaid }} pending</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- Fee Breakdown + Section Performance -->
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header"><h4><i class="bi bi-cash-stack me-2" style="color:#34d399;"></i>Fee Collection</h4></div>
+      <div class="card-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border);">
+          <div style="display:flex;align-items:center;gap:.6rem;"><i class="bi bi-cash" style="color:#34d399;"></i><span style="font-size:.875rem;">Cash</span></div>
+          <span style="font-weight:700;color:#34d399;">{{ pay_cash }}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border);">
+          <div style="display:flex;align-items:center;gap:.6rem;"><i class="bi bi-file-earmark-check" style="color:#fbbf24;"></i><span style="font-size:.875rem;">Check</span></div>
+          <span style="font-weight:700;color:#fbbf24;">{{ pay_check }}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border);">
+          <div style="display:flex;align-items:center;gap:.6rem;"><i class="bi bi-credit-card" style="color:#22d3ee;"></i><span style="font-size:.875rem;">Online</span></div>
+          <span style="font-weight:700;color:#22d3ee;">{{ pay_online }}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;">
+          <div style="display:flex;align-items:center;gap:.6rem;"><i class="bi bi-x-circle" style="color:#f87171;"></i><span style="font-size:.875rem;">Pending</span></div>
+          <span style="font-weight:700;color:#f87171;">{{ fees_unpaid }}</span>
+        </div>
+        <a href="{% url 'fee_management' %}" class="btn btn-sm w-100 mt-3" style="background:rgba(52,211,153,0.1);color:#34d399;border:1px solid rgba(52,211,153,0.3);">
+          Manage Fees →
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card h-100">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h4><i class="bi bi-bar-chart-line-fill me-2" style="color:#818cf8;"></i>Section Performance</h4>
+        <a href="{% url 'section_performance' %}" style="font-size:.8rem;color:#818cf8;text-decoration:none;">Full Report →</a>
+      </div>
+      <div class="card-body">
+        <div style="position:relative;height:220px;"><canvas id="secPerfChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tables Row -->
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h4><i class="bi bi-person-badge-fill me-2" style="color:#34d399;"></i>Recent Teachers</h4>
+        <a href="{% url 'teacher_list' %}" style="font-size:0.8rem;color:#818cf8;text-decoration:none;">View All →</a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table-dark-custom w-100">
+            <thead><tr><th>Name</th><th>Subject</th><th>Type</th></tr></thead>
+            <tbody>
+              {% for t in recent_teachers %}
+              <tr>
+                <td><a href="{% url 'teacher_detail' t.pk %}" style="color:var(--text);text-decoration:none;font-weight:600;">{{ t.name }}</a></td>
+                <td><span style="color:var(--muted);font-size:.85rem;">{{ t.subject }}</span></td>
+                <td><span class="badge-custom badge-high">{{ t.get_employment_type_display }}</span></td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="3" style="text-align:center;color:var(--muted);padding:1.5rem;">No teachers added yet</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h4><i class="bi bi-person-gear me-2" style="color:#22d3ee;"></i>Recent Staff</h4>
+        <a href="{% url 'staff_list' %}" style="font-size:0.8rem;color:#818cf8;text-decoration:none;">View All →</a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table-dark-custom w-100">
+            <thead><tr><th>Name</th><th>Designation</th><th>Department</th></tr></thead>
+            <tbody>
+              {% for s in recent_staff %}
+              <tr>
+                <td><a href="{% url 'staff_detail' s.pk %}" style="color:var(--text);text-decoration:none;font-weight:600;">{{ s.name }}</a></td>
+                <td><span style="color:var(--muted);font-size:.85rem;">{{ s.designation }}</span></td>
+                <td><span class="badge-custom badge-mid">{{ s.department }}</span></td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="3" style="text-align:center;color:var(--muted);padding:1.5rem;">No staff added yet</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h4><i class="bi bi-mortarboard-fill me-2" style="color:#818cf8;"></i>Recent Students</h4>
+        <a href="{% url 'students_list' %}" style="font-size:0.8rem;color:#818cf8;text-decoration:none;">View All →</a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table-dark-custom w-100">
+            <thead><tr><th>Name</th><th>Class</th><th>Section</th><th>Marks</th><th>Fees</th></tr></thead>
+            <tbody>
+              {% for s in recent_students %}
+              <tr>
+                <td style="font-weight:600;">{{ s.name }}</td>
+                <td><span style="color:var(--muted);font-size:.85rem;">{{ s.class_name|default:"—" }}</span></td>
+                <td>{% if s.section %}<span class="badge-custom badge-mid" style="font-size:.7rem;">{{ s.section.section }}</span>{% else %}<span style="color:var(--muted);">—</span>{% endif %}</td>
+                <td><span class="badge-custom {% if s.marks >= 75 %}badge-high{% elif s.marks >= 50 %}badge-mid{% else %}badge-low{% endif %}">{{ s.marks }}%</span></td>
+                <td>{% if s.fees_paid %}<span class="badge-custom badge-high" style="font-size:.7rem;">Paid</span>{% else %}<span class="badge-custom badge-low" style="font-size:.7rem;">Pending</span>{% endif %}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:1.5rem;">No students yet</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header"><h4><i class="bi bi-pie-chart-fill me-2" style="color:#fbbf24;"></i>Staff by Dept.</h4></div>
+      <div class="card-body" style="padding:1rem;">
+        {% for d in dept_counts %}<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;"><span style="font-size:0.82rem;color:var(--text);">{{ d.department }}</span><span style="font-size:0.82rem;font-weight:700;color:#fbbf24;">{{ d.count }}</span></div>{% empty %}<p style="color:var(--muted);font-size:0.85rem;text-align:center;margin-top:1rem;">No staff data</p>{% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Logs + Announcements -->
+<div class="row g-4">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h4><i class="bi bi-clock-history me-2" style="color:var(--muted);"></i>Recent Activity Logs</h4>
+        <a href="{% url 'logs_list' %}" style="font-size:0.8rem;color:#818cf8;text-decoration:none;">View All →</a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table-dark-custom w-100">
+            <thead><tr><th>Action</th><th>User</th><th>Description</th><th>Time</th></tr></thead>
+            <tbody>
+              {% for log in recent_logs %}<tr><td><span class="badge-custom badge-mid" style="font-size:0.72rem;">{{ log.action }}</span></td><td style="font-size:.85rem;color:var(--muted);">{{ log.user_id }}</td><td style="font-size:.85rem;">{{ log.description|truncatechars:55 }}</td><td style="font-size:.8rem;color:var(--muted);white-space:nowrap;">{{ log.timestamp|date:"M d, H:i" }}</td></tr>{% empty %}<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:1.5rem;">No logs yet</td></tr>{% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h4><i class="bi bi-megaphone-fill me-2" style="color:#f59e0b;"></i>Announcements</h4>
+        <a href="{% url 'add_announcement' %}" style="font-size:.8rem;color:#fbbf24;text-decoration:none;">+ Post</a>
+      </div>
+      <div class="card-body">
+        {% for ann in announcements %}
+        <div style="background:var(--surface2);border-radius:10px;padding:.75rem 1rem;margin-bottom:.6rem;border-left:3px solid #f59e0b;">
+          <div class="d-flex align-items-center justify-content-between gap-2">
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;font-size:.875rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ ann.title }}</div>
+              <div style="font-size:.72rem;color:var(--muted);">{{ ann.get_audience_display }} · {{ ann.created_at|date:"M d" }}</div>
+            </div>
+            <form method="post" action="{% url 'delete_announcement' ann.pk %}">{% csrf_token %}<button type="submit" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;" title="Remove">✕</button></form>
+          </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-3" style="color:var(--muted);">
+          <i class="bi bi-megaphone" style="font-size:1.5rem;opacity:.4;"></i>
+          <p style="font-size:.82rem;margin-top:.5rem;">No announcements</p>
+          <a href="{% url 'add_announcement' %}" class="btn btn-sm btn-primary">Post Now</a>
+        </div>
+        {% endfor %}
+        {% if announcements %}<div class="mt-2"><a href="{% url 'announcement_list' %}" style="font-size:.78rem;color:#818cf8;text-decoration:none;">View all →</a></div>{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const secLabels = {{ perf_labels|safe }};
+  const secMarks  = {{ perf_marks|safe }};
+  const secAtt    = {{ perf_att|safe }};
+  const palette   = ['#818cf8','#34d399','#fbbf24','#f87171','#22d3ee','#a78bfa','#fb923c'];
+  if (document.getElementById('secPerfChart') && secLabels.length) {
+    new Chart(document.getElementById('secPerfChart'), {
+      type: 'bar',
+      data: {
+        labels: secLabels,
+        datasets: [
+          { label:'Avg Marks (%)', data: secMarks, backgroundColor: palette, borderRadius: 8, borderSkipped: false },
+          { label:'Avg Attendance (%)', data: secAtt, backgroundColor:'rgba(52,211,153,0.25)', borderColor:'#34d399', borderWidth:2, type:'line', tension:0.4, pointRadius:5 }
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ labels:{ color:'#94a3b8', boxWidth:12 } } },
+        scales:{
+          y:{ beginAtZero:true, max:100, ticks:{ color:'#94a3b8' }, grid:{ color:'rgba(255,255,255,0.04)' } },
+          x:{ ticks:{ color:'#94a3b8' }, grid:{ display:false } }
+        }
+      }
+    });
+  }
+</script>
+{% endblock %}
